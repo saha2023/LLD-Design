@@ -1,114 +1,93 @@
 #include <bits/stdc++.h>
 using namespace std;
-void file_i_o() {
-#ifndef ONLINE_JUDGE
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-#endif
-}
 
-#include <iostream>
-#include <vector>
-#include <random>
-#include <string>
-class Player {
+class Player{
 public:
-    std::string name;
+    string name;
     int position;
     int moves;
-    Player(std::string n) {
-        name = n;
-        position = 0;
-        moves = 0;
+    Player(string &name){
+        this->name = name;
+        this->position = 0;
+        this->moves = 0;
     }
     int rollDice() {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(1, 6);
-        return dis(gen);
-    }
-    void move(int spaces) {
-        position += spaces;
-        moves++;
+        srand(time(0));
+        return (rand()%6)+1;
     }
 };
-class Board {
+
+class Board{
 public:
     int size;
-    std::vector<int> playerPositions;
-    std::vector<int> snakePositions;
-    std::vector<int> ladderPositions;
-    Board(int s) {
-        size = s;
+    unordered_map<int,int> snakesPositions;
+    unordered_map<int,int> laddersPositions;
+    Board(int size){
+        this->size = size;
     }
-    void movePlayer(Player &p, int roll) {
-        int newPos = p.position + roll;
-        if (newPos > size) {
-            return;
-        }
-        for (int i = 0; i < ladderPositions.size(); i += 2) {
-            if (newPos == ladderPositions[i]) {
-                newPos = ladderPositions[i + 1];
-                break;
-            }
-        }
-        for (int i = 0; i < snakePositions.size(); i += 2) {
-            if (newPos == snakePositions[i]) {
-                newPos = snakePositions[i + 1];
-                break;
-            }
-        }
-        p.position = newPos;
+    void movePlayer(Player &player, int jump){
+        int newPosition = player.position + jump;
+        if(newPosition > size) return;
+        if(snakesPositions.count(newPosition))
+            newPosition = snakesPositions[newPosition];
+        if(laddersPositions.count(newPosition))
+            newPosition = laddersPositions[newPosition];
+        player.position = newPosition;
     }
-    bool checkWinner(Player &p) {
-        if (p.position == size) {
-            std::cout << p.name << " wins!" << std::endl;
+    bool checkWinner(Player &player){
+        if(player.position == size){
+            std::cout << player.name << " wins!" << std::endl;
             return true;
         }
         return false;
     }
 };
-class Game {
+
+class Game{
 public:
     Board board;
     std::vector<Player> players;
-    std::vector<std::pair<int, int>> snakes;
-    std::vector<std::pair<int, int>> ladders;
-    Game(int boardSize, std::vector<std::string> playerNames, std::vector<std::pair<int, int>> s, std::vector<std::pair<int, int>> l) : board(boardSize) {
-        for (int i = 0; i < playerNames.size(); i++) {
-            players.push_back(Player(playerNames[i]));
+    std::vector<std::pair<int, int>> snakesPositions;
+    std::vector<std::pair<int, int>> laddersPositions;
+    Game(int boardSize, vector<string> playerNames, vector<pair<int, int>> snakesPositions, vector<pair<int, int>> laddersPositions) : board(boardSize){
+        for(string playerName: playerNames){
+            players.push_back(Player(playerName));
         }
-        snakes = s;
-        ladders = l;
-        initializeBoard();
+        this->snakesPositions = snakesPositions;
+        this->laddersPositions = laddersPositions;
+        boardInitialize();
     }
-    void initializeBoard() {
-        for (int i = 0; i < snakes.size(); i++) {
-            board.snakePositions.push_back(snakes[i].first);
-            board.snakePositions.push_back(snakes[i].second);
+    void boardInitialize(){
+        for(auto it: snakesPositions){
+            int head = it.first;
+            int tail = it.second;
+            board.snakesPositions[head] = tail;
         }
-        for (int i = 0; i < ladders.size(); i++) {
-            board.ladderPositions.push_back(ladders[i].first);
-            board.ladderPositions.push_back(ladders[i].second);
+        for(auto it: laddersPositions){
+            int bottom = it.first;
+            int top = it.second;
+            board.laddersPositions[bottom] = top;
         }
     }
-    void play() {
-        while (true) {
-            for (int i = 0; i < players.size(); i++) {
-                int roll = players[i].rollDice();
-                std::cout << players[i].name << " rolled a " << roll << std::endl;
-                board.movePlayer(players[i], roll);
-                std::cout << players[i].name << " is now on square " << players[i].position << std::endl;
-                if (board.checkWinner(players[i])) {
+    void play(){
+        while(true){
+            for(Player &player: players){
+                int jump = player.rollDice();
+                std::cout << player.name << " rolled a " << jump << std::endl;
+                board.movePlayer(player, jump);
+                std::cout << player.name << " is now on square " << player.position << std::endl;
+                if(board.checkWinner(player)){
                     return;
                 }
             }
         }
     }
 };
+
+
 int main() {
-    file_i_o();
-    std::vector<std::string> playerNames = {"Player 1", "Player 2"};
+    // Write C++ code here
+    std::vector<std::string> playerNames = {"Player 1", "Player 2", "Player 3"};
     std::vector<std::pair<int, int>> snakes = {{17, 7}, {54, 34}};
     std::vector<std::pair<int, int>> ladders = {{62, 81}, {87, 96}};
     Game game(100, playerNames, snakes, ladders);
