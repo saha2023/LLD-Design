@@ -1,3 +1,4 @@
+
 # LLD (Machine Coding Questions)
 > **SNAKES AND LADDERS**
 ```
@@ -27,4 +28,19 @@ The following is a list of functional requirements for a parking lot system:
 5) The system should be able to check the availability of parking spots and handicapped spots on a specific floor.  
     
 6) The system should be able to calculate the number of hours a vehicle has been parked.
+```
+<br><br>
+> **FLIGHT  MANAGEMENT SYSTEM**
+```
+The following requirements are considered as functional requirements for an Airline Management System:
+
+1.  Class Flight:  This class stores flight information such as flight number, departure city, arrival city, departure time, arrival time, flight status, and available seats. The class provides accessor functions to retrieve each piece of information.  
+    
+2.  Class Passenger: This class stores information about a passenger, such as name, booking status, and seat number. The class provides accessor functions to retrieve each piece of information.  
+    
+3.  Class Booking: This class stores information about a booking, such as booking number, passenger information, flight information, and payment details. The class provides accessor functions to retrieve each piece of information.  
+    
+4.  Class Staff: This class stores information about a staff member, such as name and staff ID. The class provides accessor functions to retrieve each piece of information.  
+    
+5.  Main Function: The main function creates objects of the classes and retrieves information about flight, passenger, booking, and staff using accessor functions. The retrieved information is displayed on the console.
 ```
